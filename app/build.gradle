@@ -15,7 +15,18 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation": "$projectDir/schemas".toString(),
+                        "room.incremental"   : "true"]
+            }
+        }
+
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -33,6 +44,8 @@ android {
             jvmTarget = "1.8"
         }
     }
+
+
 
     androidExtensions {
         experimental = true
