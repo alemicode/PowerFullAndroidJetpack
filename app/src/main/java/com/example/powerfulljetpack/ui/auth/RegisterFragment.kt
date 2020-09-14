@@ -12,7 +12,7 @@ import com.example.powerfulljetpack.R
 /**
  * A simple [Fragment] subclass.
  */
-class RegisterFragment : Fragment() {
+class RegisterFragment : BaseAuthFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -20,7 +20,13 @@ class RegisterFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_register,container,false)
         }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        println("debug : RegisterFragment")
+
     }
+}
 
 
 

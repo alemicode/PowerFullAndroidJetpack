@@ -13,7 +13,7 @@ import java.util.zip.Inflater
 /**
  * A simple [Fragment] subclass.
  */
-class ForgotPasswordFragment : Fragment() {
+class ForgotPasswordFragment : BaseAuthFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,6 +21,12 @@ class ForgotPasswordFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_forgot_password,container,false)
         }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        println("debug : ForgotPasswordFragment")
     }
+}
 
 
