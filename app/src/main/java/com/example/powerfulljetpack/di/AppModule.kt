@@ -13,14 +13,42 @@ import com.example.powerfulljetpack.persistence.AccountPropertiesDAO
 import com.example.powerfulljetpack.persistence.AppDatabase;
 import com.example.powerfulljetpack.persistence.AppDatabase.Companion.DATABASE_NAME
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
+import com.example.powerfulljetpack.util.Constans
+import com.example.powerfulljetpack.util.LiveDataCallAdapterFactory
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-class AppModule{
+class AppModule {
+
+
+    @Singleton
+    @Provides
+    fun provideGsonBuilder(): Gson {
+
+        //excludeFieldsWithoutExposeAnnotation means if a field doesn't have @Expose Retrofit will reject to write new data on it
+        return GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
+    }
+
+    @Singleton
+    @Provides
+
+    fun provideRetrofitBuilder(gson: Gson): Retrofit.Builder {
+
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(LiveDataCallAdapterFactory())
+            .baseUrl(Constans.BASE_URL)
+
+    }
+
 
     @Singleton
     @Provides
@@ -53,7 +81,10 @@ class AppModule{
 
     @Singleton
     @Provides
-    fun provideGlideInstance(application: Application, requestOptions: RequestOptions): RequestManager {
+    fun provideGlideInstance(
+        application: Application,
+        requestOptions: RequestOptions
+    ): RequestManager {
         return Glide.with(application)
             .setDefaultRequestOptions(requestOptions)
     }
