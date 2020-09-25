@@ -77,7 +77,7 @@ class RegisterFragment : BaseAuthFragment() {
 
     }
 
-    //
+
 
     fun register() {
 
