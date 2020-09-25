@@ -14,7 +14,6 @@ import retrofit2.Retrofit
 @Module
 class AuthModule{
 
-    // TEMPORARY
     @AuthScope
     @Provides
     fun provideFakeApiService(retrofitBuilder: Retrofit.Builder): OpenApiAuthService{
@@ -22,6 +21,9 @@ class AuthModule{
             .build()
             .create(OpenApiAuthService::class.java)
     }
+
+
+
 
     @AuthScope
     @Provides
