@@ -42,6 +42,11 @@ abstract class BaseViewModel<StateEvent, ViewState> : ViewModel() {
         return value
     }
 
+    /*
+    * it calls dataState live data to call handleStateEvent method to send reqeust
+    *
+    * or this method called by back btn to call login/register observer to save and cache data into edit text
+    * */
     fun setStateEvent(event: StateEvent) {
         _stateEvent.value = event
     }

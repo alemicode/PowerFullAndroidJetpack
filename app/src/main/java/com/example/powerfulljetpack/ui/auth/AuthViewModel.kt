@@ -1,12 +1,6 @@
 package com.example.powerfulljetpack.ui.auth
 
-import android.icu.lang.UProperty
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import com.example.mvi.main.util.ApiSuccessResponse
-import com.example.mvi.main.util.GenericApiResponse
-import com.example.powerfulljetpack.api.auth.network_responses.LoginResponse
-import com.example.powerfulljetpack.api.auth.network_responses.RegistrationResponse
 import com.example.powerfulljetpack.models.AuthToken
 import com.example.powerfulljetpack.repository.auth.AuthRepository
 import com.example.powerfulljetpack.ui.BaseViewModel
@@ -16,6 +10,7 @@ import com.example.powerfulljetpack.ui.auth.state.LoginFields
 import com.example.powerfulljetpack.ui.auth.state.RegistrationField
 import com.example.powerfulljetpack.util.AbsentLiveData
 import com.example.powerfulljetpack.util.DataState
+import kotlinx.coroutines.InternalCoroutinesApi
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
@@ -25,24 +20,25 @@ class AuthViewModel @Inject constructor(
 
 
     //
+    @InternalCoroutinesApi
     override fun handleStateEvent(stateEvent: AuthStateEvent): LiveData<DataState<AuthViewState>> {
 
         when (stateEvent) {
             is AuthStateEvent.LoginAttemptEvent -> {
 
-                return authRepository.login(
+                return authRepository.attemptLogin(
                     stateEvent.username,
                     stateEvent.password
                 )
             }
 
             is AuthStateEvent.RegisterAttemptEvent -> {
-                return authRepository.registration(
+                return authRepository.attemptRegister(
                     stateEvent.email,
                     stateEvent.username,
                     stateEvent.password,
                     stateEvent.confirmPassword
-                )
+                )!!
 
             }
 
@@ -103,6 +99,21 @@ class AuthViewModel @Inject constructor(
     override fun initNewStateEvent(): AuthViewState {
 
         return AuthViewState()
+    }
+
+
+    /*
+    * this methid cancell the current job working on auth Repository
+    * */
+    fun cancellActiveJob() {
+
+        authRepository.cancellActiveJob()
+
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancellActiveJob()
     }
 
 

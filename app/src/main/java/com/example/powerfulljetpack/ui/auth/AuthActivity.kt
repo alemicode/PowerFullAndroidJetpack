@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.findNavController
 import androidx.room.Room
 import com.example.mvi.main.util.ApiSuccessResponse
 import com.example.powerfulljetpack.R
@@ -21,7 +24,8 @@ import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class AuthActivity : DaggerAppCompatActivity() {
+class AuthActivity : DaggerAppCompatActivity(),
+    NavController.OnDestinationChangedListener {
 
 
     @Inject
@@ -35,8 +39,10 @@ class AuthActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_auth2)
+
+        //call the interface when a page change
+//        findNavController(R.id.nav_host_fragment_container).addOnDestinationChangedListener(this)
 
         viewModel = ViewModelProvider(this, providerFactory).get(AuthViewModel::class.java)
         subscribeObserver()
@@ -55,7 +61,10 @@ class AuthActivity : DaggerAppCompatActivity() {
             { datastate ->
                 datastate.data?.let { data ->
                     data.data?.let { event ->
+
+
                         event.getContentIfNotHandled().let {
+
                             it?.authToken?.let {
 
                                 println("debug : auth token is : ${it.token}")
@@ -104,8 +113,8 @@ class AuthActivity : DaggerAppCompatActivity() {
         viewModel.viewState.observe(this, Observer
         {
             it.authToken?.let {
-                sessionManager.login(it)
 
+                sessionManager.login(it)
             }
         })
 
@@ -126,5 +135,20 @@ class AuthActivity : DaggerAppCompatActivity() {
         //not back to previuse fragment/activity
         finish()
 
+    }
+
+
+    /*
+    * this method calls when navcontroller change fragment or ...
+    *
+    */
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+
+        //when changing the page or fragment job should be cancelled
+        viewModel.cancellActiveJob()
     }
 }

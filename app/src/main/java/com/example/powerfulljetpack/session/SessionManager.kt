@@ -40,6 +40,7 @@ class SessionManager @Inject constructor(
 
     }
 
+
     fun logout() {
 
         CoroutineScope(IO).launch {

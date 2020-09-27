@@ -26,7 +26,6 @@ class MainActivity : BaseActivity() {
 
 
     fun subscribeObserver() {
-
         sessionManager.cachedToken.observe(this, Observer { authToken ->
 
             if (authToken == null || authToken.account_pk == -1 || authToken.token == null) {

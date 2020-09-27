@@ -12,12 +12,18 @@ import com.example.powerfulljetpack.api.auth.network_responses.RegistrationRespo
 import com.example.powerfulljetpack.models.AuthToken
 import com.example.powerfulljetpack.persistence.AccountPropertiesDAO
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
+import com.example.powerfulljetpack.repository.NetworkBoundResource
 import com.example.powerfulljetpack.session.SessionManager
 import com.example.powerfulljetpack.ui.Data
 import com.example.powerfulljetpack.ui.Response
 import com.example.powerfulljetpack.ui.ResponseType
 import com.example.powerfulljetpack.ui.auth.state.AuthViewState
+import com.example.powerfulljetpack.ui.auth.state.LoginFields
+import com.example.powerfulljetpack.ui.auth.state.RegistrationField
 import com.example.powerfulljetpack.util.DataState
+import com.example.powerfulljetpack.util.ErrorHandling.Companion.GENERIC_AUTH_ERROR
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 class AuthRepository
@@ -29,101 +35,145 @@ constructor(
     val sessionManager: SessionManager
 ) {
 
-    fun login(username: String, password: String): LiveData<DataState<AuthViewState>> {
+    private var repositoryJob: Job? = null
 
-        return openApiAuthService.login(username, password)
-            .switchMap { response ->
-                object : LiveData<DataState<AuthViewState>>() {
-                    override fun onActive() {
-                        super.onActive()
-                        when (response) {
-                            is ApiSuccessResponse -> {
-
-                                value = DataState.data(
-                                    AuthViewState(
-
-                                        authToken = AuthToken(
-                                            account_pk = response.body.pk,
-                                            token = response.body
-                                                .token
-                                        )
-
-                                    ),
-                                    response = null
-
-                                )
-                            }
-
-                            is ApiErrorResponse -> {
-
-                                value = DataState.error(
-                                    response = Response(
-                                        message = response.errorMessage,
-                                        responseType = ResponseType.Dialog()
-                                    )
-                                )
-                            }
-                            is ApiEmptyResponse -> {
+    @InternalCoroutinesApi
+    fun attemptLogin(userName: String, password: String): LiveData<DataState<AuthViewState>> {
 
 
-                            }
+        var loginError = LoginFields(userName, password).isValidForLogin()
+        if (!loginError.equals(LoginFields.LoginError.none())) {
 
-                        }
-                    }
+
+            return returnOnErrorReponse(loginError, ResponseType.Dialog())
+        }
+
+        return object : NetworkBoundResource<LoginResponse, AuthViewState>(
+            // sessionManager.isConnectedToTheInternet()
+            true,
+            true
+        ) {
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<LoginResponse>) {
+
+                if (response.body.response.equals(GENERIC_AUTH_ERROR)) {
+                    return onErrorReturn(response.body.errorMessage, false, true)
                 }
+
+
+                onCompleteJob(
+                    DataState.data(
+                        AuthViewState(
+                            authToken = AuthToken(
+                                response.body.pk,
+                                response.body.token
+                            )
+
+                        ),
+                        response = Response("f",ResponseType.Dialog())
+                    )
+                )
             }
+
+            override suspend fun createCall(): LiveData<GenericApiResponse<LoginResponse>> {
+
+                return openApiAuthService.login(userName, password)
+            }
+
+            override fun setJob(job: Job) {
+
+                repositoryJob?.cancel()
+                repositoryJob = job
+
+            }
+
+            override suspend fun createCacheRequestAndReturn() {
+                TODO("Not yet implemented")
+            }
+
+        }.asLiveData()
     }
 
 
-    fun registration(
+    @InternalCoroutinesApi
+    fun attemptRegister(
         email: String,
         username: String,
         password: String,
         confirmPassword: String
-    ): LiveData<DataState<AuthViewState>> {
+    ): LiveData<DataState<AuthViewState>>? {
+        var regError = RegistrationField(email, username, password, confirmPassword)
+            .isValidForRegistration()
+        if (!regError.equals("None")) {
 
-        return openApiAuthService.register(email, username, password, confirmPassword)
-            .switchMap { response ->
-                object : LiveData<DataState<AuthViewState>>() {
+            return returnOnErrorReponse(regError, ResponseType.Dialog())
+        }
+        return object : NetworkBoundResource<RegistrationResponse, AuthViewState>(
+            //sessionManager.isConnectedToTheInternet()
+            true,
+            true
+        ) {
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<RegistrationResponse>) {
 
-                    override fun onActive() {
-                        super.onActive()
-
-                        when (response) {
-
-                            is ApiSuccessResponse -> {
-
-                                value = DataState.data(
-                                    AuthViewState(
-                                        authToken = AuthToken(
-                                            response.body.pk,
-                                            response.body.token
-                                        )
-                                    ),
-                                    response = null
-                                )
-
-                            }
-
-                            is ApiErrorResponse -> {
-
-                                value = DataState.error(
-                                    response = Response(
-                                        message = response.errorMessage,
-                                        responseType = ResponseType.Dialog()
-                                    )
-                                )
-                            }
-
-                            is ApiEmptyResponse -> {
+                onCompleteJob(
 
 
-                            }
-                        }
-                    }
-                }
+                    DataState.data(
+                        AuthViewState(
+
+                            authToken = AuthToken(
+                                response.body.pk,
+                                response.body.token
+                            )
+                        ),
+                        response = null
+                    )
+                )
             }
 
+            override suspend fun createCall(): LiveData<GenericApiResponse<RegistrationResponse>> {
+
+                return openApiAuthService.register(email, username, password, confirmPassword)
+            }
+
+            override fun setJob(job: Job) {
+
+                repositoryJob?.cancel()
+                repositoryJob = job
+            }
+
+            override suspend fun createCacheRequestAndReturn() {
+
+
+            }
+
+        }.asLiveData()
+
+    }
+
+    fun cancellActiveJob() {
+        // repositoryJob?.cancel()
+    }
+
+    private fun returnOnErrorReponse(
+
+        loginError: String,
+        dialog: ResponseType.Dialog
+    ): LiveData<DataState<AuthViewState>> {
+
+
+        println("debug : ${loginError}")
+        return object : LiveData<DataState<AuthViewState>>() {
+            override fun onActive() {
+                super.onActive()
+                value = DataState.error(
+                    Response(
+                        loginError,
+                        dialog
+                    )
+                )
+
+            }
+        }
     }
 
 

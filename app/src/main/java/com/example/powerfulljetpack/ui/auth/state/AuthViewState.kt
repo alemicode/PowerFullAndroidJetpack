@@ -3,7 +3,6 @@ package com.example.powerfulljetpack.ui.auth.state
 import com.example.powerfulljetpack.models.AuthToken
 
 
-
 /*
 * most of important things are behind this class
 * AuthToken :
@@ -16,7 +15,7 @@ import com.example.powerfulljetpack.models.AuthToken
 * */
 data class AuthViewState(
 
-    var registrationField: RegistrationField? = RegistrationField(),
+    var registrationField: RegistrationField = RegistrationField(),
     var LoginFields: LoginFields? = LoginFields(),
     var authToken: AuthToken? = AuthToken()
 )
@@ -54,7 +53,6 @@ data class RegistrationField(
 
     }
 
-
     fun isValidForRegistration(): String {
 
         if (registration_email.isNullOrEmpty() ||
@@ -71,6 +69,8 @@ data class RegistrationField(
 
 
     }
+
+
 }
 
 
@@ -108,6 +108,12 @@ data class LoginFields(
     }
 
 }
+
+
+data class SmsRegistration(
+
+    val number: String
+)
 
 
 
