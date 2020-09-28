@@ -3,6 +3,7 @@ package com.example.powerfulljetpack.ui.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -11,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.room.Room
 import com.example.mvi.main.util.ApiSuccessResponse
 import com.example.powerfulljetpack.R
+import com.example.powerfulljetpack.models.AuthToken
 import com.example.powerfulljetpack.persistence.AppDatabase
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
 import com.example.powerfulljetpack.session.SessionManager
@@ -22,17 +24,16 @@ import com.example.powerfulljetpack.ui.main.MainActivity
 import com.example.powerfulljetpack.viewmodels.ViewModelProviderFactory
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class AuthActivity : DaggerAppCompatActivity(),
+class AuthActivity : BaseActivity(),
     NavController.OnDestinationChangedListener {
 
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
 
-    @Inject
-    lateinit var sessionManager: SessionManager
 
     lateinit var viewModel: AuthViewModel
 
@@ -56,58 +57,42 @@ class AuthActivity : DaggerAppCompatActivity(),
     fun subscribeObserver() {
 
 
-        viewModel.dataState.observe(
-            this, Observer
-            { datastate ->
-                datastate.data?.let { data ->
-                    data.data?.let { event ->
+        viewModel.dataState.observe(this, Observer
+        { datastate ->
 
 
-                        event.getContentIfNotHandled().let {
+            onDataStateChange(datastate)
+            datastate.data?.let { data ->
+                data.data?.let { event ->
 
-                            it?.authToken?.let {
 
-                                println("debug : auth token is : ${it.token}")
-                                viewModel.setAuthToken(it)
-                            }
-                            it?.LoginFields?.let {
+                    event.getContentIfNotHandled().let {
 
-                                println("debug : login ${it.login_email}")
-                                viewModel.setLoginField(it)
-                            }
+                        it?.authToken?.let {
 
-                            it?.registrationField?.let {
-
-                                println("registration field : ${it.registration_email}")
-                                viewModel.setRegistrationFields(it)
-                            }
-
+                            println("debug : auth token is : ${it.token}")
+                            viewModel.setAuthToken(it)
                         }
-                    }
+                        it?.LoginFields?.let {
 
-                    data.response.let {
-                        val event = it?.peekContent()
-                        when (event?.responseType) {
+                            println("debug : login ${it.login_email}")
+                            viewModel.setLoginField(it)
+                        }
 
-                            is ResponseType.Toast -> {
+                        it?.registrationField?.let {
 
-                            }
-
-                            is ResponseType.Dialog -> {
-
-                            }
-
-                            is ResponseType.None -> {
-                                println("debug : AuthActivity : the message is ${event.message}")
-                            }
+                            println("registration field : ${it.registration_email}")
+                            viewModel.setRegistrationFields(it)
                         }
 
                     }
-
                 }
 
 
-            })
+            }
+
+
+        })
 
 
         viewModel.viewState.observe(this, Observer
@@ -121,7 +106,7 @@ class AuthActivity : DaggerAppCompatActivity(),
         sessionManager.cachedToken.observe(this, Observer
         { authToken ->
 
-            if (authToken != null && authToken?.account_pk != -1 && authToken?.token != null) {
+            if (authToken != null || authToken?.account_pk != -1 || authToken?.token != null) {
 
                 navAuthActivity()
             }
@@ -151,4 +136,17 @@ class AuthActivity : DaggerAppCompatActivity(),
         //when changing the page or fragment job should be cancelled
         viewModel.cancellActiveJob()
     }
+
+    override fun displayProgressBar(bool: Boolean) {
+
+        if (bool) {
+
+            progress_bar.visibility = View.VISIBLE
+        } else {
+
+            progress_bar.visibility = View.GONE
+        }
+    }
 }
+
+
