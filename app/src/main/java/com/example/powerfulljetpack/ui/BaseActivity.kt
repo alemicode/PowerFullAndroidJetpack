@@ -16,6 +16,11 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
     private val debug = "App Debug"
 
 
+    /*
+    * calling this interface just after getting response from dataState Observer
+    * to handle specific state (loading, getting data, display error...)
+    *
+    * */
     override fun onDataStateChange(dataState: DataState<*>?) {
 
         dataState.let { dataState ->

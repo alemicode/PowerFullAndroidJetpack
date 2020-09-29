@@ -55,6 +55,8 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>
 
                         // make network call
                         val apiResponse = createCall()
+
+
                         result.addSource(apiResponse){ response ->
                             result.removeSource(apiResponse)
 
