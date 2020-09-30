@@ -1,5 +1,6 @@
 package com.example.powerfulljetpack.di.auth
 
+import android.content.SharedPreferences
 import com.example.powerfulljetpack.api.auth.OpenApiAuthService
 import com.example.powerfulljetpack.persistence.AccountPropertiesDAO
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
@@ -10,19 +11,16 @@ import dagger.Provides
 import retrofit2.Retrofit
 
 
-
 @Module
-class AuthModule{
+class AuthModule {
 
     @AuthScope
     @Provides
-    fun provideFakeApiService(retrofitBuilder: Retrofit.Builder): OpenApiAuthService{
+    fun provideFakeApiService(retrofitBuilder: Retrofit.Builder): OpenApiAuthService {
         return retrofitBuilder
             .build()
             .create(OpenApiAuthService::class.java)
     }
-
-
 
 
     @AuthScope
@@ -31,13 +29,17 @@ class AuthModule{
         sessionManager: SessionManager,
         authTokenDao: AuthTokenDAO,
         accountPropertiesDao: AccountPropertiesDAO,
-        openApiAuthService: OpenApiAuthService
+        openApiAuthService: OpenApiAuthService,
+        sharedPreferences: SharedPreferences,
+        sharedpreferencesEditor: SharedPreferences.Editor
     ): AuthRepository {
         return AuthRepository(
             authTokenDao,
             accountPropertiesDao,
             openApiAuthService,
-            sessionManager
+            sessionManager,
+            sharedPreferences,
+            sharedpreferencesEditor
         )
     }
 

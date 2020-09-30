@@ -110,10 +110,6 @@ data class LoginFields(
 }
 
 
-data class SmsRegistration(
-
-    val number: String
-)
 
 
 

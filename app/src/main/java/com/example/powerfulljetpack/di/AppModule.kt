@@ -2,6 +2,8 @@ package com.example.powerfulljetpack.di
 
 
 import android.app.Application;
+import android.content.Context
+import android.content.SharedPreferences
 
 import androidx.room.Room;
 import com.bumptech.glide.Glide
@@ -15,6 +17,7 @@ import com.example.powerfulljetpack.persistence.AppDatabase.Companion.DATABASE_N
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
 import com.example.powerfulljetpack.util.Constans
 import com.example.powerfulljetpack.util.LiveDataCallAdapterFactory
+import com.example.powerfulljetpack.util.PreferenceKeys
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
@@ -29,6 +32,29 @@ import retrofit2.converter.gson.GsonConverterFactory
 class AppModule {
 
 
+    //refrence of sharedPrefrence
+
+    @Singleton
+    @Provides
+    fun gettingSharedPrefrences(application: Application): SharedPreferences {
+
+        return application.getSharedPreferences(
+            PreferenceKeys.APP_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+    }
+
+
+    //refrence of sharedPrefrences Editor
+    @Singleton
+    @Provides
+    fun gettingSharedPrefrencesEditor(sharedPreferences: SharedPreferences): SharedPreferences.Editor {
+
+        return sharedPreferences.edit()
+    }
+
+
+    //refrence of gson
     @Singleton
     @Provides
     fun provideGsonBuilder(): Gson {
@@ -37,6 +63,7 @@ class AppModule {
         return GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
     }
 
+    //serring up retrofit
     @Singleton
     @Provides
 
@@ -64,7 +91,6 @@ class AppModule {
     fun provideAuthTokenDao(db: AppDatabase): AuthTokenDAO {
         return db.authTokenDAO()
     }
-
     @Singleton
     @Provides
     fun provideAccountPropertiesDao(db: AppDatabase): AccountPropertiesDAO {

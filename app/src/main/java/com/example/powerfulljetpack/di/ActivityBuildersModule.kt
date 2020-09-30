@@ -5,6 +5,9 @@ import com.example.powerfulljetpack.di.auth.AuthFragmentBuildersModule
 import com.example.powerfulljetpack.di.auth.AuthModule
 import com.example.powerfulljetpack.di.auth.AuthScope
 import com.example.powerfulljetpack.di.auth.AuthViewModelModule
+import com.example.powerfulljetpack.di.main.MainFragmentBuildersModule
+import com.example.powerfulljetpack.di.main.MainModule
+import com.example.powerfulljetpack.di.main.MainViewModelModule
 import com.example.powerfulljetpack.ui.auth.AuthActivity
 import com.example.powerfulljetpack.ui.main.MainActivity
 import dagger.Module
@@ -20,7 +23,10 @@ abstract class ActivityBuildersModule {
     abstract fun contributeAuthActivity(): AuthActivity
 
 
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector(
+
+        modules = [MainFragmentBuildersModule::class, MainViewModelModule::class, MainModule::class]
+    )
     abstract fun contributeMainActivity(): MainActivity
 
 }

@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
             }
 
             is AuthStateEvent.CheckPerviuseAuthEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.checkPreviusellyAuthUser()
 
             }
 
@@ -93,7 +93,7 @@ class AuthViewModel @Inject constructor(
         }
         update.authToken = authToken
 
-        _viewState.postValue(update)
+        _viewState.value = update
     }
 
     override fun initNewStateEvent(): AuthViewState {

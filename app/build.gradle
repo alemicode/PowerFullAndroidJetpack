@@ -46,7 +46,6 @@ android {
     }
 
 
-
     androidExtensions {
         experimental = true
     }

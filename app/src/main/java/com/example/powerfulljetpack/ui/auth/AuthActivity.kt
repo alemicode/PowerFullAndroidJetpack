@@ -48,6 +48,7 @@ class AuthActivity : BaseActivity(),
         viewModel = ViewModelProvider(this, providerFactory).get(AuthViewModel::class.java)
         subscribeObserver()
 
+        checkPreviouseAuthToken()
     }
 
 
@@ -111,6 +112,10 @@ class AuthActivity : BaseActivity(),
                 navAuthActivity()
             }
         })
+    }
+
+    fun checkPreviouseAuthToken(){
+        viewModel.setStateEvent(AuthStateEvent.CheckPerviuseAuthEvent())
     }
 
     private fun navAuthActivity() {
