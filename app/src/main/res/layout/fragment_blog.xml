@@ -29,5 +29,11 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <Button
+        android:id="@+id/btn_blogfragment"
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+
+    </Button>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

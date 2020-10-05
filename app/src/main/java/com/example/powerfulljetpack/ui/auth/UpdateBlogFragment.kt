@@ -18,9 +18,8 @@ class UpdateBlogFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return TextView(activity).apply {
-            setText(R.string.hello_blank_fragment)
-        }
+        return inflater.inflate(R.layout.fragment_update_blog, container, false)
+
     }
 
 

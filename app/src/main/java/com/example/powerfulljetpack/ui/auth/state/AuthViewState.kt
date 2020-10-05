@@ -13,6 +13,7 @@ import com.example.powerfulljetpack.models.AuthToken
 * if you press back liveData for viewStated is called and they call observer of it from loginFragment and RegisterFragment
 *
 * */
+
 data class AuthViewState(
 
     var registrationField: RegistrationField = RegistrationField(),
