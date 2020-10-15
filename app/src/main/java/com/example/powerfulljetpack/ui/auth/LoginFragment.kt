@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.powerfulljetpack.R
 import com.example.powerfulljetpack.models.AuthToken
 import com.example.powerfulljetpack.ui.auth.state.AuthStateEvent
@@ -16,9 +17,7 @@ import com.example.powerfulljetpack.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
 
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class LoginFragment : BaseAuthFragment() {
 
     override fun onCreateView(
@@ -35,6 +34,7 @@ class LoginFragment : BaseAuthFragment() {
 
         login_button.setOnClickListener {
             login()
+
         }
 
         viewModel.viewState.observe(this, Observer { authViewState ->

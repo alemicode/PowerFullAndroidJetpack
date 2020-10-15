@@ -23,9 +23,13 @@ abstract class BaseAuthFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = activity?.run {
-            ViewModelProvider(this,providerFactory).get(viewModel::class.java)
-        }?:throw Exception("activity is not ailve")
+            ViewModelProvider(this, providerFactory).get(viewModel::class.java)
+        } ?: throw Exception("activity is not ailve")
 
+        cancellActiveJob()
+    }
 
+    private fun cancellActiveJob() {
+        viewModel.cancellActiveJob()
     }
 }

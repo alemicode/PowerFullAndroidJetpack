@@ -15,16 +15,19 @@ abstract class BaseViewModel<StateEvent, ViewState> : ViewModel() {
 
 
     /*
-    * viewState : observerd by :
-    * LoginFragment for save and  asign parameters into edit texts
+    * this viewState is for actions happended into app like press back ...
+    *
+     viewState : observerd by :
+    * LoginFragment for save and  asigne parameters into edit texts
     *
     * RegistrationFragment for save and  asign parameters into edit texts
-    *
-    *
     */
     val viewState: LiveData<ViewState>
         get() = _viewState
 
+    /*
+    * this viewState is for handling actions about requests or caching of database
+    * */
 
     val dataState: LiveData<DataState<ViewState>> = Transformations
         .switchMap(_stateEvent) {

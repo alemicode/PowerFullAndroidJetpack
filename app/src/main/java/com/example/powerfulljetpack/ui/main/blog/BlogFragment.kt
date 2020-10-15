@@ -29,6 +29,7 @@ class BlogFragment : BaseBlogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
+        println("debugu: account fragment")
 
         btn_blogfragment.setOnClickListener {
 

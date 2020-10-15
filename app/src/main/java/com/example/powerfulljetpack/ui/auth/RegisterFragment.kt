@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 
 import com.example.powerfulljetpack.R
 import com.example.powerfulljetpack.ui.auth.state.AuthStateEvent
@@ -34,6 +35,7 @@ class RegisterFragment : BaseAuthFragment() {
         println("debug : RegisterFragment")
 
         assingIntoEditText()
+
 
 
         register_button.setOnClickListener {

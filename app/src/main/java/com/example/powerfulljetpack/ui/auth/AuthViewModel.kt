@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.powerfulljetpack.models.AuthToken
 import com.example.powerfulljetpack.repository.auth.AuthRepository
 import com.example.powerfulljetpack.ui.BaseViewModel
+import com.example.powerfulljetpack.ui.Data
 import com.example.powerfulljetpack.ui.auth.state.AuthStateEvent
 import com.example.powerfulljetpack.ui.auth.state.AuthViewState
 import com.example.powerfulljetpack.ui.auth.state.LoginFields
@@ -45,6 +46,14 @@ class AuthViewModel @Inject constructor(
             is AuthStateEvent.CheckPerviuseAuthEvent -> {
                 return authRepository.checkPreviusellyAuthUser()
 
+            }
+            is AuthStateEvent.NONE -> {
+                return object : LiveData<DataState<AuthViewState>>() {
+                    override fun onActive() {
+                        super.onActive()
+                        value = DataState.data(null, null)
+                    }
+                }
             }
 
 
@@ -101,19 +110,25 @@ class AuthViewModel @Inject constructor(
         return AuthViewState()
     }
 
+    fun handlePendingData() {
+        setStateEvent(AuthStateEvent.NONE())
+    }
+
 
     /*
     * this methid cancell the current job working on auth Repository
     * */
     fun cancellActiveJob() {
 
+        handlePendingData()
         authRepository.cancellActiveJob()
 
     }
 
     override fun onCleared() {
-        super.onCleared()
         cancellActiveJob()
+        super.onCleared()
+
     }
 
 

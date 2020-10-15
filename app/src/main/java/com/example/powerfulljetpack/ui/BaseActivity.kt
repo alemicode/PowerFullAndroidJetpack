@@ -1,7 +1,11 @@
 package com.example.powerfulljetpack.ui
 
+import android.os.Bundle
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import com.example.powerfulljetpack.session.SessionManager
 import com.example.powerfulljetpack.util.DataState
+import com.example.powerfulljetpack.util.LastApiReponseResult
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -15,6 +19,7 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
     lateinit var sessionManager: SessionManager
     private val debug = "App Debug"
 
+    lateinit var lastApiReponseResult: LastApiReponseResult
 
     /*
     * calling this interface just after getting response from dataState Observer
@@ -80,6 +85,12 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
                 else -> println("debug : no response")
 
             }
+
+            //notify state of state into subclasses
+
+            it?.message?.let { it1 ->
+                lastApiReponseResult = notifyStateTypeToSubClasses(0, it1)
+            }
         }
 
     }
@@ -89,7 +100,9 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
 
         errorEvent?.getContentIfNotHandled().let {
 
+
             when (it?.response?.responseType) {
+
 
                 is ResponseType.Toast -> {
 
@@ -114,10 +127,33 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
                 else -> println("debug : no response")
 
             }
+
+            //notify state of state into fragment
+
+            it?.response?.message?.let { it1 ->
+                lastApiReponseResult = notifyStateTypeToSubClasses(1, it1)
+            }
+
         }
 
     }
 
+    /*
+    * notyfy other subclasses like fragments that their responses are fail or success
+    * type = 0 No Error
+    * type = 1 Error
+    * */
+    fun notifyStateTypeToSubClasses(type: Int, message: String): LastApiReponseResult {
+        return LastApiReponseResult(
+            message,
+            type
+        )
+    }
 
     abstract fun displayProgressBar(bool: Boolean)
+    abstract fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    )
 }

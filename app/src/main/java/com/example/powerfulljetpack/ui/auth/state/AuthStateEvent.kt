@@ -20,5 +20,6 @@ sealed class AuthStateEvent {
 
     class CheckPerviuseAuthEvent() : AuthStateEvent()
 
+    class NONE() : AuthStateEvent()
 
 }

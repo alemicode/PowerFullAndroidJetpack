@@ -43,7 +43,6 @@ class LauncherFragment : BaseAuthFragment() {
             navForgotPassword()
         }
 
-        focusable_view.requestFocus()
 
 
     }
@@ -54,7 +53,7 @@ class LauncherFragment : BaseAuthFragment() {
     }
 
     private fun navLogin() {
-        findNavController().navigate(R.id.action_launcherFragment_to_loginFragment)
+        findNavController().navigate(R.id.action_launcherFragment_to_loginFragment2)
     }
 
     private fun navRegistration() {

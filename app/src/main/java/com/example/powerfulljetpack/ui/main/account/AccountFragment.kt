@@ -3,14 +3,15 @@ package com.example.powerfulljetpack.ui.main.account
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import com.example.powerfulljetpack.R
+import com.example.powerfulljetpack.models.AccountProperties
 import com.example.powerfulljetpack.session.SessionManager
+import com.example.powerfulljetpack.ui.main.account.state.AccountStateEvent
 import kotlinx.android.synthetic.main.fragment_account.*
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 /**
@@ -32,12 +33,16 @@ class AccountFragment : BaseAccountFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        println("debugu: account fragment")
 
 
         setHasOptionsMenu(true)
 
+
+        subscribeObservers()
         logout_button.setOnClickListener {
-            sessionManager.logout()
+            viewModel.logOut()
+
         }
 
         change_password.setOnClickListener {
@@ -46,6 +51,51 @@ class AccountFragment : BaseAccountFragment() {
         }
 
 
+    }
+
+    private fun subscribeObservers() {
+        viewModel.dataState.observe(this, Observer { dataState ->
+            dataStateChangeListener.onDataStateChange(dataState)
+            dataState.let {
+
+
+                it.data.let { data ->
+                    data?.data.let {
+                        it?.getContentIfNotHandled()?.let {
+                            viewModel.setAccountPropertiesData(it)
+                        }
+                    }
+                }
+
+
+            }
+
+        })
+
+        viewModel.viewState.observe(this, Observer {
+
+
+            it?.accountProperties.let {
+                setAccountFields(it!!)
+
+            }
+
+
+        })
+    }
+
+
+    private fun setAccountFields(accountProperties: AccountProperties) {
+        email.setText(accountProperties.email)
+        username.setText(accountProperties.userName)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setStateEvent(
+
+            AccountStateEvent.GetAccountPropertiesEvent()
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -61,6 +111,7 @@ class AccountFragment : BaseAccountFragment() {
             }
         }
         return super.onOptionsItemSelected(item)
-
     }
+
+
 }

@@ -17,5 +17,10 @@ abstract class BaseCreateBlogFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        cancellActiveJobs()
+    }
+
+    fun cancellActiveJobs() {
+        // viewModel.cancellActiveJob()
     }
 }

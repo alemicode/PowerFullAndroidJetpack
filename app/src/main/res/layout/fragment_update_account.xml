@@ -34,6 +34,7 @@
                     android:inputType="textEmailAddress"
                     android:id="@+id/input_email"
                     android:imeOptions="flagNoExtractUi"
+
                     />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -54,7 +55,7 @@
             <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/input_username"
+                    android:id="@+id/username_inp"
                     android:textColor="#000"
                     android:inputType="text"
                     android:layout_marginTop="30dp"

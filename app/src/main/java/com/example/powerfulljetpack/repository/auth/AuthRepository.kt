@@ -53,9 +53,11 @@ constructor(
             return returnOnErrorReponse(loginError, ResponseType.Dialog())
         }
 
-        return object : NetworkBoundResource<LoginResponse, AuthViewState>(
+        return object : NetworkBoundResource<LoginResponse, Any, AuthViewState>(
             // sessionManager.isConnectedToTheInternet()
             true,
+            true,
+            false,
             true
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<LoginResponse>) {
@@ -112,11 +114,6 @@ constructor(
             }
 
 
-            override suspend fun createCall(): LiveData<GenericApiResponse<LoginResponse>> {
-
-                return openApiAuthService.login(userName, password)
-            }
-
             override fun setJob(job: Job) {
 
                 repositoryJob?.cancel()
@@ -127,6 +124,20 @@ constructor(
 
             //not use in this case b/c for login/register we need internet
             override suspend fun createCacheRequestAndReturn() {
+                TODO("Not yet implemented")
+            }
+
+
+            //ignore
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                TODO("Not yet implemented")
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<LoginResponse>> {
+                return openApiAuthService.login(userName, password)
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
                 TODO("Not yet implemented")
             }
 
@@ -147,13 +158,16 @@ constructor(
 
             return returnOnErrorReponse(regError, ResponseType.Dialog())
         }
-        return object : NetworkBoundResource<RegistrationResponse, AuthViewState>(
+        return object : NetworkBoundResource<RegistrationResponse, Any, AuthViewState>(
             //sessionManager.isConnectedToTheInternet()
             true,
+            true,
+            false,
             true
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<RegistrationResponse>) {
 
+                println("moha : ${response.body.token}")
 
                 //no need to save usernane yet
                 accountPropertiesDao.insertOrIgnore(
@@ -205,10 +219,6 @@ constructor(
                 )
             }
 
-            override suspend fun createCall(): LiveData<GenericApiResponse<RegistrationResponse>> {
-
-                return openApiAuthService.register(email, username, password, confirmPassword)
-            }
 
             override fun setJob(job: Job) {
 
@@ -221,6 +231,21 @@ constructor(
             override suspend fun createCacheRequestAndReturn() {
 
 
+            }
+
+
+            //ignore
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                TODO("Not yet implemented")
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<RegistrationResponse>> {
+                return openApiAuthService.register(email, username, password, confirmPassword)
+
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                TODO("Not yet implemented")
             }
 
         }.asLiveData()
@@ -238,9 +263,11 @@ constructor(
 
             return noTokenFound()
         }
-        return object : NetworkBoundResource<Void, AuthViewState>(
+        return object : NetworkBoundResource<Void, Any, AuthViewState>(
             sessionManager.isConnectedToTheInternet(),
-            false
+            false,
+            false,
+            true
         ) {
             override suspend fun createCacheRequestAndReturn() {
 
@@ -280,16 +307,25 @@ constructor(
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<Void>) {
             }
 
-            override suspend fun createCall(): LiveData<GenericApiResponse<Void>> {
-
-                return AbsentLiveData.create()
-            }
-
 
             override fun setJob(job: Job) {
 
                 repositoryJob?.cancel()
                 repositoryJob = job
+            }
+
+
+            //ignore
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                TODO("Not yet implemented")
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<Void>> {
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                TODO("Not yet implemented")
             }
 
         }.asLiveData()
@@ -317,7 +353,7 @@ constructor(
 
 
     fun cancellActiveJob() {
-        // repositoryJob?.cancel()
+         repositoryJob?.cancel()
     }
 
     private fun returnOnErrorReponse(

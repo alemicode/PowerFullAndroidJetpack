@@ -16,7 +16,7 @@ class AuthModule {
 
     @AuthScope
     @Provides
-    fun provideFakeApiService(retrofitBuilder: Retrofit.Builder): OpenApiAuthService {
+    fun provideApiService(retrofitBuilder: Retrofit.Builder): OpenApiAuthService {
         return retrofitBuilder
             .build()
             .create(OpenApiAuthService::class.java)

@@ -15,7 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -166,4 +166,20 @@ dependencies {
     // Android-Image-Cropper
     def android_image_cropper_version = "2.8.+"
     api "com.theartofdev.edmodo:android-image-cropper:$android_image_cropper_version"
+
+
+    //anroid RXjava
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    // (see https://github.com/ReactiveX/RxJava/releases for latest 3.x.x version)
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
+
+
+    //to detect memory leak
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+    implementation 'com.squareup.leakcanary:leakcanary-object-watcher-android:2.5'
+
 }

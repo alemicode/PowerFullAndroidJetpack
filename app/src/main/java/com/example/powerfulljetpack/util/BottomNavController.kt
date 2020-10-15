@@ -20,7 +20,6 @@ import com.example.powerfulljetpack.R
 import com.example.powerfulljetpack.ui.DataStateChangeListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class BottomNavController(
     val context: Context,
     @IdRes val containerId: Int,
@@ -47,8 +46,6 @@ class BottomNavController(
         // Replace fragment representing a navigation item
         val fragment = fragmentManager.findFragmentByTag(itemId.toString())
             ?: NavHostFragment.create(navGraphProvider.getNavGraphId(itemId))
-
-        val x = itemId
         fragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.fade_in,
@@ -107,6 +104,7 @@ class BottomNavController(
             }
         }
     }
+
 
     private class BackStack : ArrayList<Int>() {
         companion object {
@@ -170,11 +168,7 @@ fun BottomNavigationView.setUpNavigation(
     setOnNavigationItemSelectedListener {
         bottomNavController.onNavigationItemSelected(it.itemId)
 
-        println("debug11 : 1")
-        return@setOnNavigationItemSelectedListener true
-
     }
-
 
     setOnNavigationItemReselectedListener {
         bottomNavController
@@ -184,7 +178,6 @@ fun BottomNavigationView.setUpNavigation(
             .fragments[0]?.let { fragment ->
 
             onReselectListener.onReselectNavItem(
-
                 bottomNavController.activity.findNavController(bottomNavController.containerId),
                 fragment
             )
@@ -192,8 +185,7 @@ fun BottomNavigationView.setUpNavigation(
     }
 
     bottomNavController.setOnItemNavigationChanged { itemId ->
-
-        //  menu.findItem(itemId).isChecked = true
+        //menu.findItem(itemId).isChecked = true
     }
 }
 
