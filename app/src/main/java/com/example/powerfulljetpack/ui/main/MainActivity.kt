@@ -49,7 +49,6 @@ class MainActivity : BaseActivity(),
 
     override fun getNavGraphId(itemId: Int) = when (itemId) {
         R.id.nav_blog -> {
-
             R.navigation.nav_blog
         }
         R.id.nav_create_blog -> {

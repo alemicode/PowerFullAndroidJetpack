@@ -15,6 +15,7 @@ import com.example.powerfulljetpack.persistence.AccountPropertiesDAO
 import com.example.powerfulljetpack.persistence.AppDatabase;
 import com.example.powerfulljetpack.persistence.AppDatabase.Companion.DATABASE_NAME
 import com.example.powerfulljetpack.persistence.AuthTokenDAO
+import com.example.powerfulljetpack.persistence.BlogPostDAO
 import com.example.powerfulljetpack.util.Constans
 import com.example.powerfulljetpack.util.LiveDataCallAdapterFactory
 import com.example.powerfulljetpack.util.PreferenceKeys
@@ -91,11 +92,15 @@ class AppModule {
     fun provideAuthTokenDao(db: AppDatabase): AuthTokenDAO {
         return db.authTokenDAO()
     }
+
     @Singleton
     @Provides
     fun provideAccountPropertiesDao(db: AppDatabase): AccountPropertiesDAO {
+        
         return db.accountPropertiesDAO()
     }
+
+
 
     @Singleton
     @Provides
@@ -104,6 +109,7 @@ class AppModule {
             .placeholderOf(R.drawable.default_image)
             .error(R.drawable.default_image)
     }
+
 
     @Singleton
     @Provides

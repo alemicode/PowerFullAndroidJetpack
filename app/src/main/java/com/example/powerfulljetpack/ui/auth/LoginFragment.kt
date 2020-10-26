@@ -62,8 +62,6 @@ class LoginFragment : BaseAuthFragment() {
 
     fun login() {
 
-
-
         viewModel.setStateEvent(
             AuthStateEvent.LoginAttemptEvent(
                 input_email.text.toString(),

@@ -35,4 +35,6 @@ data class AuthToken(
     var token: String? = null
 
 
-)
+) {
+
+}

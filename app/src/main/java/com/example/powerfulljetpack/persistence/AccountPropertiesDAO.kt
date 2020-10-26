@@ -25,3 +25,4 @@ interface AccountPropertiesDAO {
     fun updateAccountProperties(email: String, username: String, pk: Int)
 
 }
+
